@@ -23,21 +23,21 @@ enum MuteType {
 
 native bool AB_IsBanned(int client);
 // if no time is defined keep -1 and we ban for map
-native bool AB_BanClient(int client, int time = -1, const char[] reason);
-native bool AB_UnBanClient(int client);
-native BanType AB_GetBanType(int client);
+native bool AB_BanClient(const char[] steamid, int clientIP, int currenttime, int banddur = -1, const char[] reason);
+native bool AB_UnBanClient(const char[] steamid);
+native BanType AB_GetBanType(const char[] steamid);
 
 native bool AB_IsMuted(int client);
 // if no time is defined keep -1 and we mute for map
-native bool AB_MuteClient(int client, int time = -1, const char[] reason);
-native bool AB_UnMuteClient(int client);
-native BanType AB_GetMuteType(int client);
+native bool AB_MuteClient(const char[] steamid, int clientIP, int currenttime, int mutedur = -1, const char[] reason);
+native bool AB_UnMuteClient(const char[] steamid);
+native BanType AB_GetMuteType(const char[] steamid);
 
 native bool AB_IsGaged(int client);
 // if no time is defined keep -1 and we gag for map
-native bool AB_GagClient(int client, int time = -1, const char[] reason);
-native bool AB_UnGagClient(int client);
-native BanType AB_GetGagType(int client);
+native bool AB_GagClient(const char[] steamid, int clientIP, int currenttime, int gagdur = -1, const char[] reason);
+native bool AB_UnGagClient(const char[] steamid);
+native BanType AB_GetGagType(const char[] steamid);
 
 public SharedPlugin __pl_amubansmm = {
 	name = "amuBans--",
