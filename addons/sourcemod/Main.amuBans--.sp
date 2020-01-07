@@ -117,6 +117,10 @@ public SetupDatabase() {
 	SQL_UnlockDatabase(g_hPunishedDatabase);
 }
 
+void CheckArgs(int client, ) {
+	
+}
+
 public Action Admin_BAN(int client int args) {
 	szTarget[32];
 	szBanDur[32];
@@ -173,15 +177,15 @@ public Action Admin_BAN(int client int args) {
 }
 
 public Action Admin_AddBan(int client, int args) {
-	szSteamID[32];
+	szTargetID[32];
 	szBanDur[32];
 	szReason[32];
 
-	GetCmdArg(1, szSteamID, 32);
+	GetCmdArg(1, szTargetID, 32);
 	GetCmdArg(2, szBanDur, 32);
 	GetCmdArg(3, szReason, 32);
 
-	if(szSteamID == '\0') {
+	if(szTargetID == '\0') {
 		ReplyToCommand(client, "You must specify target. Command example: sm_ban 76561198383391535 3d \"Heh gey\"");
 		return Plugin_Handled;
 	}
@@ -197,7 +201,7 @@ public Action Admin_AddBan(int client, int args) {
 	int iTemp;
 	for(int i = 0; i <= 32; i++) {
 		if(szBanDur[i] == '\0') {
-			iTemp = i;
+			iTemp = i--; // might not sub 1 from i first?
 			i = 33;
 		}
 	}
@@ -205,23 +209,37 @@ public Action Admin_AddBan(int client, int args) {
 	char szTimeType[8] = szBanDur[iTemp];
 	szBanDur[iTemp] = '\0';
 	int iBanDur = -1;
-	if(szTimeType[0] == "d")
+	if(szTimeType[0] == "d") // Days
 		// change time to minutes
-		iBanDur = (StringToInt(szTimeType) * 1440);
-	else if(szTimeType[0] == "m")
+		iBanDur = (StringToInt(szBanDur) * 1440);
+	else if(szTimeType[0] == "m") // Months
 		// change time to minutes
-		iBanDur = (StringToInt(szTimeType) * 43800);
-	else if(szTimeType[0] == "y")
+		iBanDur = (StringToInt(szBanDur) * 43800);
+	else if(szTimeType[0] == "y") // Years
 		// change time to minutes
-		iBanDur = (StringToInt(szTimeType) * 525600);
-	else
+		iBanDur = (StringToInt(szBanDur) * 525600);
+	else if(szTimeType[0] == "p")
+		// set time to 100 years (perm)
+		iBanDur = 52560000;
+	else if(szTimeType[0] == "0" || "1" || "2" || "3" || "4" ||
+													 "5" || "6" || "7" || "8" || "9")
 		// time is already minutes
 		iBanDur = StringToInt(szTimeType);
+	else if(szTimeType[0] != "d" && szTimeType[0] != "m" &&
+					szTimeType[0] != "y" && szTimeType[0] != "p") {
+		ReplyToCommand(client, "Incorrect formatting on time, ex \"30\" for 30 minutes, \"3d\" for 3 days, \"3m\" for 3 months, \"p\" for perm");
+		return Plugin_Handled;
+	}
 
-	int iTarget = FindTarget(client, szTarget);
-	char szTargetID[128];
-	GetClientAuthId(iTarget, AuthId_SteamID64, szTargetID, 128);
-	int iTargetIP = GetClientIP(iTarget);
+	// check the string wasnt bad
+	// if there were multiple chars bandur is 0
+	if(iBanDur == 0) {
+		ReplyToCommand(client, "Time must be valid, ex \"30\" for 30 minutes, \"3d\" for 3 days, \"3m\" for 3 months, \"p\" for perm");
+		return Plugin_Handled;
+	}
+
+	// get client ip from steamid stored in sql tabel
+	// TODO erik
 	int iCurrentTime = GetTime();
 
 	AB_BanClient(szTargetID, iTargetIP, iCurrentTime, iBanDur, szReason);
