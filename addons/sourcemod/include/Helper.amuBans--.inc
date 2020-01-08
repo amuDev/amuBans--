@@ -1,5 +1,3 @@
-#define PREFIX "[amuBans--]"
-
 enum BanType {
 	Ban_Map, // banned until map switches
 	Ban_Perm, // banned permanently
@@ -22,20 +20,17 @@ enum MuteType {
 }
 
 native bool AB_IsBanned(int client);
-// if no time is defined keep -1 and we ban for map
-native bool AB_BanClient(const char[] steamid, int clientIP, int currenttime, int banddur = -1, const char[] reason);
+native bool AB_BanClient(const char[] adminid, const char[] steamid, int clientIP, int currenttime, int banddur, const char[] reason);
 native bool AB_UnBanClient(const char[] steamid);
 native BanType AB_GetBanType(const char[] steamid);
 
 native bool AB_IsMuted(int client);
-// if no time is defined keep -1 and we mute for map
-native bool AB_MuteClient(const char[] steamid, int clientIP, int currenttime, int mutedur = -1, const char[] reason);
+native bool AB_MuteClient(const char [] adminid, const char[] steamid, int clientIP, int currenttime, int mutedur, const char[] reason);
 native bool AB_UnMuteClient(const char[] steamid);
 native BanType AB_GetMuteType(const char[] steamid);
 
 native bool AB_IsGaged(int client);
-// if no time is defined keep -1 and we gag for map
-native bool AB_GagClient(const char[] steamid, int clientIP, int currenttime, int gagdur = -1, const char[] reason);
+native bool AB_GagClient(const char [] adminid, const char[] steamid, int clientIP, int currenttime, int gagdur, const char[] reason);
 native bool AB_UnGagClient(const char[] steamid);
 native BanType AB_GetGagType(const char[] steamid);
 
